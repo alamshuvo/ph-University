@@ -1,19 +1,40 @@
-import {Layout,Menu}  from "antd";
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { createElement } from "react";
-const  {Header, Content,Footer,Sider} = Layout
+import {Layout,Menu, MenuProps}  from "antd";
+import { NavLink, Outlet } from "react-router-dom";
 
-const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-    (icon, index) => ({
-      key: String(index + 1),
-      icon:createElement(icon),
-      label: `nav ${index + 1}`,
-    }),
-  );
+const  {Header, Content,Sider} = Layout
+
+const items:MenuProps["items"] = [
+ {
+    key:"Dashboard",
+    label:<NavLink to={"/admin/dashboard"}>Dashboard</NavLink>,
+ },
+ {
+    key:"2",
+    label:"Student",
+ },
+ {
+    key:"faculty",
+    label:"faculty",
+    children:[
+        {
+            key:"5",
+            label:<NavLink to={"/admin/create-admin"}>Create Admin</NavLink>
+        },
+        {
+          key:"faculty",
+          label:<NavLink to={"/admin/create-faculty"}>Create Faculty</NavLink>
+        },
+        {
+            key:"6",
+            label:<NavLink to={"/admin/create-student"}>Create Student</NavLink>
+        }
+    ]
+ }
+]
 export default function MainLayout() {
 
   return (
-    <Layout className="">
+    <Layout style={{height:"100vh"}}>
     <Sider
       breakpoint="lg"
       collapsedWidth="0"
@@ -24,7 +45,11 @@ export default function MainLayout() {
         console.log(collapsed, type);
       }}
     >
-      <div className="demo-logo-vertical" />
+      <div style={{color:"white",textAlign:"center",display:"flex",justifyContent:"center",
+        alignItems:"center",margin:"30px 0 "
+      }}> 
+        <h1>University Management System</h1>
+      </div>
       <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']} items={items} />
     </Sider>
     <Layout>
@@ -36,7 +61,7 @@ export default function MainLayout() {
             minHeight: 360,
           }}
         >
-        <h1>The main content should go here</h1>
+        <Outlet></Outlet>
         </div>
       </Content>
      
