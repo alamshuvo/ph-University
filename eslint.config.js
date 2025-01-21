@@ -24,5 +24,6 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
     },
+    "eslint-disable @typescript-eslint/no-explicit-any":"warn"
   },
 )
