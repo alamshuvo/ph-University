@@ -1,3 +1,4 @@
+import { TResoponseRedux } from "../../../types/global";
 import { baseApi } from "../../api/baseApi";
 
 const academicManagement = baseApi.injectEndpoints({
@@ -7,7 +8,7 @@ const academicManagement = baseApi.injectEndpoints({
         url: "/academic-semesters",
         method: "GET",
       }),
-      transformErrorResponse: (response) => {
+      transformErrorResponse: (response:TResoponseRedux) => {
         console.log("inside redux", response);
         return {
           data: response.data,
@@ -15,6 +16,12 @@ const academicManagement = baseApi.injectEndpoints({
         };
       },
     }),
+
+
+
+
+
+    
     addAcademicSemester: builder.mutation({
       query: (data) => ({
         url: "/academic-semesters/create-academic-semesters",
