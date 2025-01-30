@@ -23,3 +23,8 @@ export type Tresponse<T> = {
 };
 
 export type TResoponseRedux<T> = Tresponse<T> & BaseQueryApi
+
+export type TQuearyParams = {
+  name: string;
+  value: boolean | React.key;
+}
