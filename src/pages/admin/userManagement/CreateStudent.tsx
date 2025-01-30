@@ -3,8 +3,12 @@ import PHForm from "../../../components/form/PhForm";
 import PhInput from "../../../components/form/PhInput";
 import { Button, Col, Divider, Row } from "antd";
 import PhSelect from "../../../components/form/PhSelect";
-import { bloodGroupOptions, genderOptions } from "../AcademicManagement/const/global";
+import {
+  bloodGroupOptions,
+  genderOptions,
+} from "../AcademicManagement/const/global";
 import PhDatePicker from "../../../components/form/phDatePicker";
+import { useGetAllSemesterQuery } from "../../../redux/features/admin/academicManagement.api";
 
 const studentDumyData = {
   password: "alamshuvo1",
@@ -45,37 +49,48 @@ const studentDumyData = {
 //! For develepoment purpose
 //! should be removed
 const studentDefaultValues = {
-    name: {
-      firstName: "Iftakhar",
-      middleName: "A",
-      lastName: "Doe",
-    },
-    gender: "male",
-    email: "iftakharalamshuvo111@gmail.com",
-    contactNo: "+1234567890",
-    emergencyNo: "+0987654321",
-    bloogGroup: "O+",
-    presentAdress: "123 Main St, Springfield",
-    permanentAdress: "456 Elm St, Springfield",
-    guardian: {
-      fatherName: "Robert Doe",
-      fatherOccupation: "Engineer",
-      fatherContactNo: "+1234567899",
-      motherName: "Jane Doe",
-      motherOccupation: "Teacher",
-      motherContactNo: "+1234567888",
-    },
-    localGuardian: {
-      name: "Michael Smith",
-      occupation: "Accountant",
-      contactNo: "+1234567877",
-      address: "789 Maple St, Springfield",
-    },
-    admissionSemester: "676eba871a17cbc19cfdff6e",
-    academicDepertment: "6770d7628b1fc26f1d99f7ed",
-    profileImg: "http://example.com/images/profile.jpg",
-  }
+  name: {
+    firstName: "Iftakhar",
+    middleName: "A",
+    lastName: "Doe",
+  },
+  gender: "male",
+  email: "iftakharalamshuvo111@gmail.com",
+  contactNo: "+1234567890",
+  emergencyNo: "+0987654321",
+  bloogGroup: "O+",
+  presentAdress: "123 Main St, Springfield",
+  permanentAdress: "456 Elm St, Springfield",
+  guardian: {
+    fatherName: "Robert Doe",
+    fatherOccupation: "Engineer",
+    fatherContactNo: "+1234567899",
+    motherName: "Jane Doe",
+    motherOccupation: "Teacher",
+    motherContactNo: "+1234567888",
+  },
+  localGuardian: {
+    name: "Michael Smith",
+    occupation: "Accountant",
+    contactNo: "+1234567877",
+    address: "789 Maple St, Springfield",
+  },
+//   admissionSemester: "676eba871a17cbc19cfdff6e",
+//   academicDepertment: "6770d7628b1fc26f1d99f7ed",
+  profileImg: "http://example.com/images/profile.jpg",
+};
 const CreateStudent = () => {
+  const { data: sData, isLoading: sIsLoading } =
+    useGetAllSemesterQuery(undefined);
+
+    
+  const semesterOptions = sData?.data.map((semester) => ({
+    value: semester._id,
+    label: `${semester.name} ${semester.year}`,
+  }));
+
+
+
   const onsubmit: SubmitHandler<FieldValues> = (data: any) => {
     console.log(data);
     const formData = new FormData();
@@ -117,20 +132,29 @@ const CreateStudent = () => {
             </Col>
 
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-             <PhSelect options={genderOptions} name="gender" label="Gender"></PhSelect>
+              <PhSelect
+                options={genderOptions}
+                name="gender"
+                label="Gender"
+              ></PhSelect>
             </Col>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-              <PhDatePicker name="datepicker" label="Date Picker"></PhDatePicker>
+              <PhDatePicker
+                name="datepicker"
+                label="Date Picker"
+              ></PhDatePicker>
             </Col>
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-             <PhSelect options={bloodGroupOptions} name="bloogGroup" label="Blood Group">
-
-             </PhSelect>
+              <PhSelect
+                options={bloodGroupOptions}
+                name="bloogGroup"
+                label="Blood Group"
+              ></PhSelect>
             </Col>
           </Row>
-          <Row gutter={8}>
           <Divider>Contact Info</Divider>
-          <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+          <Row gutter={8}>
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
               <PhInput
                 type="text"
                 id="email"
@@ -171,10 +195,9 @@ const CreateStudent = () => {
               ></PhInput>
             </Col>
           </Row>
-
-          <Row gutter={8}>
           <Divider>Guardian</Divider>
-          <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+          <Row gutter={8}>
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
               <PhInput
                 type="text"
                 id="fatherName"
@@ -223,10 +246,9 @@ const CreateStudent = () => {
               ></PhInput>
             </Col>
           </Row>
-
-          <Row gutter={8}>
           <Divider>local Guardian</Divider>
-          <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+          <Row gutter={8}>
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
               <PhInput
                 type="text"
                 id="localGuardianName"
@@ -257,6 +279,19 @@ const CreateStudent = () => {
                 name="localGuardian.address"
                 label="Adress"
               ></PhInput>
+            </Col>
+          </Row>
+          <Divider>Academic Info</Divider>
+          <Row gutter={8}>
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+              <PhSelect options={semesterOptions} disabled={sIsLoading} name="admissionSemester" label="Admission Semester" />
+            </Col>
+
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+              <PhSelect
+                name="academicDepertment"
+                label="Admission Depertment"
+              />
             </Col>
           </Row>
           <Button htmlType="submit">Submit</Button>
