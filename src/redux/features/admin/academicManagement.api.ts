@@ -1,14 +1,21 @@
-import { TResoponseRedux } from "../../../types/global";
+import { TAcademicSemester, TResoponseRedux } from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
 const academicManagement = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllSemester: builder.query({
-      query: () => ({
-        url: "/academic-semesters",
-        method: "GET",
-      }),
-      transformErrorResponse: (response:TResoponseRedux) => {
+      query: (args) => {
+        const params = new URLSearchParams()
+        params.append("name",args[0])
+        return {
+          url: "/academic-semesters",
+          method: "GET",
+          params:params
+        };
+      },
+      transformErrorResponse: (
+        response: TResoponseRedux<TAcademicSemester[]>
+      ) => {
         console.log("inside redux", response);
         return {
           data: response.data,
@@ -17,11 +24,6 @@ const academicManagement = baseApi.injectEndpoints({
       },
     }),
 
-
-
-
-
-    
     addAcademicSemester: builder.mutation({
       query: (data) => ({
         url: "/academic-semesters/create-academic-semesters",

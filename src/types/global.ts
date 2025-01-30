@@ -14,12 +14,12 @@ export type TMeta = {
   total: number;
   totalPage: number;
 };
-export type Tresponse = {
-  data?: any;
+export type Tresponse<T> = {
+  data?: T;
   error?: TError;
   meta?:TMeta,
   sucess:boolean,
   message:string
 };
 
-export type TResoponseRedux = Tresponse & BaseQueryApi
+export type TResoponseRedux<T> = Tresponse<T> & BaseQueryApi
