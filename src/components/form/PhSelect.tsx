@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 type TPhSelectProps = {
     label: string;
     name: string;
-    options: { value: string; label: string ,disabled?:boolean}[] | undefined;
+    options?: { value: string; label: string ,disabled?:boolean}[] | undefined;
     disabled?:boolean
 
 }
