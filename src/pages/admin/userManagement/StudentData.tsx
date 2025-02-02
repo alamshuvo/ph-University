@@ -1,9 +1,19 @@
-import { Button, Row, Space, Table, TableColumnsType, TableProps } from "antd";
+import {
+  Button,
+  Modal,
+  Pagination,
+  Row,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+} from "antd";
 import { TQuearyParams, TStudent } from "../../../types";
 import { useState } from "react";
-import { useGetAllStudentsQuery } from "../../../redux/features/admin/userManagement.api";
+import { useBlockUserMutation, useGetAllStudentsQuery, useGetSingleUserQuery } from "../../../redux/features/admin/userManagement.api";
+import { Link } from "react-router-dom";
 
-export type TTableData = Pick<TStudent, "email" | "_id" |"id">;
+export type TTableData = Pick<TStudent, "email" | "_id" | "id">;
 // interface DataType {
 //   key: React.Key;
 //   name: string;
@@ -11,18 +21,49 @@ export type TTableData = Pick<TStudent, "email" | "_id" |"id">;
 //   address: string;
 // }
 const StudentData = () => {
-  const [params, setParamas] = useState<TQuearyParams[] | undefined>(undefined);
+  const [params, setParamas] = useState<TQuearyParams[]>([]);
+  const [page, setPage] = useState(1);
+  const [isModalOpen,setIsModalOpen]=useState(false);
   const {
     data: studentData,
     isLoading,
     isFetching,
-  } = useGetAllStudentsQuery(params);
-console.log(studentData?.data);
-  const tableData = studentData?.data?.map(({ _id, email,id }: TTableData) => ({
-    key: _id,
-    email,
-    id
-  }));
+  } = useGetAllStudentsQuery([
+    { name: "limit", value: 4 },
+    { name: "page", value: page },
+    { name: "sort", value: "id" },
+    ...params,
+  ]);
+
+  const [blockUser,{Bdata,error}]=useBlockUserMutation();
+ 
+  console.log(studentData?.data?.user);
+  const showModal = () => {
+    setIsModalOpen(true);
+    
+  };
+
+  const handleOk = (id) => {
+    console.log(id);
+    setIsModalOpen(false);
+    blockUser({ id: id, data: { status: "blocked" } });
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+ 
+  console.log(studentData?.data);
+  const tableData = studentData?.data?.map(
+    ({ _id, email, id,user }: TTableData) => ({
+      key: _id,
+      email,
+      id,
+      user
+     
+    })
+  );
   const columns: TableColumnsType<TTableData> = [
     {
       title: "Name",
@@ -35,20 +76,32 @@ console.log(studentData?.data);
       dataIndex: "id",
     },
     {
+    title:"User Details",
+    key:"user",
+    dataIndex:'user'
+    },
+    {
       title: "Action",
       key: "x",
-      render: () => {
+      render: (item) => {
+        console.log(item);
         return (
           <Row gutter={8}>
             <Space>
-              <Button>Details</Button>
+              <Link to={`/admin/student-data/${item?.key}`}>
+                <Button>Details</Button>
+              </Link>
+
               <Button>Update</Button>
-              <Button>Block</Button>
+              <Button type="primary" onClick={showModal}>Block</Button>
+              <Modal title='Block User' open={isModalOpen} onOk={()=>handleOk(item?.key)} onCancel={handleCancel}>
+                <p>Some contents.........</p>
+              </Modal>
             </Space>
           </Row>
         );
       },
-      width:"1%"
+      width: "1%",
     },
   ];
 
@@ -78,9 +131,16 @@ console.log(studentData?.data);
         loading={isFetching}
         columns={columns}
         dataSource={tableData}
+        pagination={false}
         onChange={onChange}
         showSorterTooltip={{ target: "sorter-icon" }}
       />
+      <Pagination
+        current={page}
+        onChange={(value) => setPage(value)}
+        total={10}
+        pageSize={2}
+      ></Pagination>
     </div>
   );
 };

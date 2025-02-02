@@ -1,5 +1,5 @@
 
-import { TResoponseRedux, TStudent } from "../../../types";
+import { TResoponseRedux, TStudent,} from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
 
@@ -24,11 +24,12 @@ const userManagementApi = baseApi.injectEndpoints({
           ) => {
             console.log("inside redux", response);
             return {
-              data: response.data,
+              data: (response.data),
               meta: response.meta,
             };
           },
         }),
+
     
         addStudent: builder.mutation({
           query: (data) => ({
@@ -37,7 +38,15 @@ const userManagementApi = baseApi.injectEndpoints({
             body: data,
           }),
         }),
+        blockUser:builder.mutation({
+          query:({data,id})=>({
+
+            url:`/users/change-status/${id}`,
+            method:"POST",
+            body:data
+          })
+        })
       })
 })
 
-export const {useAddStudentMutation, useGetAllStudentsQuery} = userManagementApi
+export const {useAddStudentMutation, useGetAllStudentsQuery,useBlockUserMutation} = userManagementApi
