@@ -68,9 +68,7 @@ import { Tresponse } from "../../../types";
 
 const SemesterRegestation = () => {
   const [addSemester]= useAddRegisterSemesterMutation()
-  const { data: accademicsemester } = useGetAllSemesterQuery([
-    { name: "sort", value: "year" },
-  ]);
+  const { data: accademicsemester } = useGetAllSemesterQuery(undefined);
 
   const academicsemesterOptions = accademicsemester?.data.map((item) => ({
     value: item._id,
