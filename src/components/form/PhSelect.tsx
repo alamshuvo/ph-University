@@ -19,6 +19,7 @@ const PhSelect = ({ label,name,options,disabled }:TPhSelectProps) => {
            {...field}
            options={options}
            size="large"
+           disabled={disabled}
           />
           {error && <span style={{color:'red'}}>{error.message}</span>}
         </Form.Item>

@@ -355,7 +355,13 @@ const CreateStudent = () => {
   const { data: dData, isLoading: dIsLoading } =
     useGetAcademicDepartmentsQuery(undefined);
 
-  const semesterOptions = sData?.data?.map((item) => ({
+  interface Semester {
+    _id: string;
+    name: string;
+    year: string;
+  }
+
+  const semesterOptions = sData?.data?.map((item: Semester) => ({
     value: item._id,
     label: `${item.name} ${item.year}`,
   }));
@@ -593,6 +599,7 @@ const CreateStudent = () => {
           <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
             <PhSelect
             options={departmentOptions}
+            disabled={dIsLoading}
               name="academicDepertment"
               label="Admission Depertment"
             />
