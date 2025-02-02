@@ -9,7 +9,7 @@ import Course from "../pages/admin/courseManagement/Course";
 import CreateCourse from "../pages/admin/courseManagement/CreateCourse";
 import OfferCourse from "../pages/admin/courseManagement/OfferCourse";
 import OfferedCourse from "../pages/admin/courseManagement/OfferedCourse";
-import SemesterRegester from "../pages/admin/courseManagement/SemesterRegester";
+import SemesterRegestation from "../pages/admin/courseManagement/SemesterRegestation";
 import CreateAdmin from "../pages/admin/userManagement/CreateAdmin";
 import CreateFaculty from "../pages/admin/userManagement/CreateFaculty";
 import CreateStudent from "../pages/admin/userManagement/CreateStudent";
@@ -92,7 +92,7 @@ export const adminPaths = [
       {
         name: "Registered Semester",
         path: "registered-semesters",
-        element: <SemesterRegester></SemesterRegester>,
+        element: <SemesterRegestation></SemesterRegestation>
       },
       {
         name: "Create Course",
