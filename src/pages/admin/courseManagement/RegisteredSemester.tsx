@@ -1,9 +1,13 @@
-import { Button, Table, TableColumnsType, Tag } from "antd";
+import { Button, Dropdown, Table, TableColumnsType, Tag } from "antd";
 
-import {  TSemester } from "../../../types";
+import { TSemester } from "../../../types";
 
-import { useGetAllSemestersQuery } from "../../../redux/features/admin/CourseManagement";
+import {
+  useGetAllSemestersQuery,
+  useUpdateRegisterSemesterMutation,
+} from "../../../redux/features/admin/CourseManagement";
 import moment from "moment";
+import { useState } from "react";
 
 export type TTableData = Pick<
   TSemester,
@@ -15,20 +19,55 @@ export type TTableData = Pick<
 //   age: number;
 //   address: string;
 // }
+
+const items = [
+  {
+    label: "Upcoming",
+    key: "UPCOMING",
+  },
+  {
+    label: "Ongoing",
+    key: "ONGOING",
+  },
+  {
+    label: "Ended",
+    key: "ENDED",
+  },
+];
+
 const RegisteredSemester = () => {
-//   const [params, setParamas] = useState<TQuearyParams[] | undefined>(undefined);
-const {data:semesterData,isLoading,isFetching} = useGetAllSemestersQuery(undefined)
- 
+  const [semesterId, setSemesterId] = useState("");
+  console.log(semesterId);
+  //   const [params, setParamas] = useState<TQuearyParams[] | undefined>(undefined);
+  const {
+    data: semesterData,
+    isLoading,
+    isFetching,
+  } = useGetAllSemestersQuery(undefined);
+  const [updateSemesterStatus] = useUpdateRegisterSemesterMutation(undefined);
+
   const tableData = semesterData?.data?.map(
     ({ _id, academicSemester, startDate, endDate, status }: TTableData) => ({
       key: _id,
-      name:`${academicSemester.name} ${academicSemester.year}`,
+      name: `${academicSemester.name} ${academicSemester.year}`,
       startDate: moment(new Date(startDate)).format("MMMM"),
-      endDate:moment(new Date(endDate)).format("MMMM"),
-      status
-      
+      endDate: moment(new Date(endDate)).format("MMMM"),
+      status,
     })
   );
+  const handleStatusUpdate = (data) => {
+    const updateData = {
+      id: semesterId,
+      data: {
+        status: data?.key,
+      },
+    };
+    updateSemesterStatus(updateData)
+  };
+  const menuProps = {
+    items,
+    onClick: handleStatusUpdate,
+  };
   const columns: TableColumnsType<TTableData> = [
     {
       title: "Name",
@@ -47,7 +86,7 @@ const {data:semesterData,isLoading,isFetching} = useGetAllSemestersQuery(undefin
         } else {
           return <Tag color="green">{item}</Tag>;
         }
-      }
+      },
     },
     {
       title: "Start Date",
@@ -60,38 +99,39 @@ const {data:semesterData,isLoading,isFetching} = useGetAllSemestersQuery(undefin
       dataIndex: "endDate",
     },
     {
-        title:'Action',
-        key:"x",
-        render:()=>{
-            return (
-                <div>
-                    <Button>update</Button>
-                </div>
-            )
-        }
-    }
+      title: "Action",
+      key: "x",
+      render: (item) => {
+        return (
+          <div>
+            <Dropdown menu={menuProps} trigger={["click"]}>
+              <Button onClick={() => setSemesterId(item?.key)}>Update</Button>
+            </Dropdown>
+          </div>
+        );
+      },
+    },
   ];
 
-//   const onChange: TableProps<TTableData>["onChange"] = (
-//     pagination,
-//     filters,
-//     sorter,
-//     extra
-//   ) => {
-//     if (extra.action === "filter") {
-//       const quearyParams:TQuearyParams[] = [];
-//       filters.name?.forEach((item) =>
-//         quearyParams.push({ name: "name", value: item })
-//       );
-//       setParamas(quearyParams);
-//     }
-//     console.log("params", pagination, filters, sorter, extra);
-//   };
+  //   const onChange: TableProps<TTableData>["onChange"] = (
+  //     pagination,
+  //     filters,
+  //     sorter,
+  //     extra
+  //   ) => {
+  //     if (extra.action === "filter") {
+  //       const quearyParams:TQuearyParams[] = [];
+  //       filters.name?.forEach((item) =>
+  //         quearyParams.push({ name: "name", value: item })
+  //       );
+  //       setParamas(quearyParams);
+  //     }
+  //     console.log("params", pagination, filters, sorter, extra);
+  //   };
 
-if (isLoading) {
-  return <div>Loading........</div>
-}
-
+  if (isLoading) {
+    return <div>Loading........</div>;
+  }
 
   return (
     <div>
