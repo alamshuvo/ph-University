@@ -10,10 +10,14 @@ import {
 } from "antd";
 import { TQuearyParams, TStudent } from "../../../types";
 import { useState } from "react";
-import { useBlockUserMutation, useGetAllStudentsQuery, useGetSingleUserQuery } from "../../../redux/features/admin/userManagement.api";
+import {
+  useBlockUserMutation,
+  useGetAllStudentsQuery,
+  useGetSingleUserQuery,
+} from "../../../redux/features/admin/userManagement.api";
 import { Link } from "react-router-dom";
 
-export type TTableData = Pick<TStudent, "email" | "_id" | "id"|"user">;
+export type TTableData = Pick<TStudent, "email" | "_id" | "id" | "user">;
 // interface DataType {
 //   key: React.Key;
 //   name: string;
@@ -23,7 +27,8 @@ export type TTableData = Pick<TStudent, "email" | "_id" | "id"|"user">;
 const StudentData = () => {
   const [params, setParamas] = useState<TQuearyParams[]>([]);
   const [page, setPage] = useState(1);
-  const [isModalOpen,setIsModalOpen]=useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnotherModalOpen,setAnotherModalOpen]=useState(false)
   const {
     data: studentData,
     isLoading,
@@ -35,14 +40,22 @@ const StudentData = () => {
     ...params,
   ]);
 
-  const [blockUser,{Bdata,error}]=useBlockUserMutation();
- 
+  const [blockUser, { Bdata, error }] = useBlockUserMutation();
+
   console.log(studentData?.data?.user);
   const showModal = () => {
     setIsModalOpen(true);
-    
   };
-
+ const showAnotherModal=()=>{
+    setAnotherModalOpen(true)
+ }
+ const handleanotherOk=(id)=>{
+    setAnotherModalOpen(false)
+    blockUser({id:id,data:{status:"in-progress"}})
+ }
+ const handleAnotherCancel=()=>{
+    setAnotherModalOpen(false)
+ }
   const handleOk = (id) => {
     console.log(id);
     setIsModalOpen(false);
@@ -53,15 +66,13 @@ const StudentData = () => {
     setIsModalOpen(false);
   };
 
- 
   console.log(studentData?.data);
   const tableData = studentData?.data?.map(
-    ({ _id, email, id,user }: TTableData) => ({
+    ({ _id, email, id, user }: TTableData) => ({
       key: _id,
       email,
       id,
-      user
-     
+      user,
     })
   );
   const columns: TableColumnsType<TTableData> = [
@@ -76,9 +87,9 @@ const StudentData = () => {
       dataIndex: "id",
     },
     {
-    title:"User Details",
-    key:"user",
-    dataIndex:'user._id'
+      title: "User Details",
+      key: "user",
+      dataIndex: "user._id",
     },
     {
       title: "Action",
@@ -91,10 +102,30 @@ const StudentData = () => {
               <Link to={`/admin/student-data/${item?.key}`}>
                 <Button>Details</Button>
               </Link>
-
               <Button>Update</Button>
-              <Button type="primary" onClick={showModal}>Block</Button>
-              <Modal title='Block User' open={isModalOpen} onOk={()=>handleOk(item?.key)} onCancel={handleCancel}>
+
+              {item?.user?.status === "in-progress" ? (
+                <Button type="primary" onClick={showModal}>
+                  Block
+                </Button>
+              ) : (
+                <Button type="primary" onClick={showAnotherModal}>
+                  in-Progress
+                </Button>
+              )}
+              <Modal title="unBlock User"
+              open={isAnotherModalOpen}
+              onOk={()=>handleanotherOk(item?.key)}
+              onCancel={handleAnotherCancel}>
+               <p>This is another  Modal</p>
+              </Modal>
+
+              <Modal
+                title="Block User"
+                open={isModalOpen}
+                onOk={() => handleOk(item?.key)}
+                onCancel={handleCancel}
+              >
                 <p>Some contents.........</p>
               </Modal>
             </Space>
