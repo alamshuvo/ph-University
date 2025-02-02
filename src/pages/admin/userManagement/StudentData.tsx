@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useBlockUserMutation, useGetAllStudentsQuery, useGetSingleUserQuery } from "../../../redux/features/admin/userManagement.api";
 import { Link } from "react-router-dom";
 
-export type TTableData = Pick<TStudent, "email" | "_id" | "id">;
+export type TTableData = Pick<TStudent, "email" | "_id" | "id"|"user">;
 // interface DataType {
 //   key: React.Key;
 //   name: string;
@@ -78,13 +78,13 @@ const StudentData = () => {
     {
     title:"User Details",
     key:"user",
-    dataIndex:'user'
+    dataIndex:'user._id'
     },
     {
       title: "Action",
       key: "x",
       render: (item) => {
-        console.log(item);
+        console.log(item?.user?.status);
         return (
           <Row gutter={8}>
             <Space>
