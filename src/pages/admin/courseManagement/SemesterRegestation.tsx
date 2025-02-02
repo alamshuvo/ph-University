@@ -69,6 +69,7 @@ import { Tresponse } from "../../../types";
 const SemesterRegestation = () => {
   const [addSemester]= useAddRegisterSemesterMutation()
   const { data: accademicsemester } = useGetAllSemesterQuery(undefined);
+  console.log(accademicsemester);
 
   const academicsemesterOptions = accademicsemester?.data.map((item) => ({
     value: item._id,
@@ -102,6 +103,7 @@ const SemesterRegestation = () => {
             toast.success('Semester created', { id: toastId });
           }
         } catch (err) {
+          console.log(err);
           toast.error('Something went wrong', { id: toastId });
         }
   };

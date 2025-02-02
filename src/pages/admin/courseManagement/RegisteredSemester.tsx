@@ -1,4 +1,4 @@
-import { Button, Table, TableColumnsType } from "antd";
+import { Button, Table, TableColumnsType, Tag } from "antd";
 
 import {  TSemester } from "../../../types";
 
@@ -39,6 +39,15 @@ const {data:semesterData,isLoading,isFetching} = useGetAllSemestersQuery(undefin
       title: "Status",
       key: "status",
       dataIndex: "status",
+      render: (item) => {
+        if (item === "UPCOMING") {
+          return <Tag color="blue">{item}</Tag>;
+        } else if (item === "ENDED") {
+          return <Tag color="red">{item}</Tag>;
+        } else {
+          return <Tag color="green">{item}</Tag>;
+        }
+      }
     },
     {
       title: "Start Date",

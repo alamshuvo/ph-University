@@ -1,4 +1,4 @@
-import { TSemester } from "../../../types";
+import { TResoponseRedux, TSemester } from "../../../types";
 import { baseApi } from "../../api/baseApi";
 
 const courseManagementApi = baseApi.injectEndpoints({
