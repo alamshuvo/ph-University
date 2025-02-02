@@ -1,31 +1,34 @@
+
+import { TResoponseRedux, TStudent } from "../../../types";
 import { baseApi } from "../../api/baseApi";
+
 
 const userManagementApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        // getAllSemester: builder.query({
-        //   query: (args) => {
-        //     const params = new URLSearchParams()
-        //     if (args) {
-        //       args.forEach(element => {
-        //         params.append(element.name,element.value as string)
-        //       });
-        //     }
-        //     return {
-        //       url: "/academic-semesters",
-        //       method: "GET",
-        //       params:params
-        //     };
-        //   },
-        //   transformErrorResponse: (
-        //     response: TResoponseRedux<TAcademicSemester[]>
-        //   ) => {
-        //     console.log("inside redux", response);
-        //     return {
-        //       data: response.data,
-        //       meta: response.meta,
-        //     };
-        //   },
-        // }),
+        getAllStudents: builder.query({
+          query: (args) => {
+            const params = new URLSearchParams()
+            if (args) {
+              args.forEach(element => {
+                params.append(element.name,element.value as string)
+              });
+            }
+            return {
+              url: "/students",
+              method: "GET",
+              params:params
+            };
+          },
+          transformErrorResponse: (
+            response: TResoponseRedux<TStudent[]>
+          ) => {
+            console.log("inside redux", response);
+            return {
+              data: response.data,
+              meta: response.meta,
+            };
+          },
+        }),
     
         addStudent: builder.mutation({
           query: (data) => ({
@@ -37,4 +40,4 @@ const userManagementApi = baseApi.injectEndpoints({
       })
 })
 
-export const {useAddStudentMutation } = userManagementApi
+export const {useAddStudentMutation, useGetAllStudentsQuery} = userManagementApi
