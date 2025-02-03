@@ -1,12 +1,14 @@
 import { FieldValues, SubmitHandler } from "react-hook-form";
 import PhForm from "../../../components/form/PhForm";
-import { Button, Col, Flex} from "antd";
+import { Button, Col, Flex } from "antd";
 import PhSelect from "../../../components/form/PhSelect";
 import { toast } from "sonner";
 
-
 import PhInput from "../../../components/form/PhInput";
-import { useAddCourseMutation, useGetAllCoursesQuery } from "../../../redux/features/admin/CourseManagement";
+import {
+  useAddCourseMutation,
+  useGetAllCoursesQuery,
+} from "../../../redux/features/admin/CourseManagement";
 import { Tresponse } from "../../../types";
 
 // const curentYear = new Date().getFullYear();
@@ -67,8 +69,8 @@ import { Tresponse } from "../../../types";
 // import { TResponse } from '../../../types/global';
 
 const CreateCourse = () => {
-  const [createCourse]= useAddCourseMutation()
-  const { data: courses } =useGetAllCoursesQuery(undefined);
+  const [createCourse] = useAddCourseMutation();
+  const { data: courses } = useGetAllCoursesQuery(undefined);
   console.log(courses);
 
   const prerequisiteCoursesOptions = courses?.data.map((item) => ({
@@ -76,68 +78,59 @@ const CreateCourse = () => {
     label: item.title,
   }));
 
-  
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const toastId = toast.loading("Creating...");
 
- 
-
     const courseData = {
-     ...data,
-    isDeleted:false,
-    preRequisiteCourses:data?.preRequisiteCourses?.map((item)=>({
-        course:item,
-        isDeleted:false
-    }))
+      ...data,
+      code:Number(data.code),
+      credits:Number(data.credits),
+      isDeleted: false,
+      preRequisiteCourses: data.preRequisiteCourses ? data.preRequisiteCourses.map((item) => ({
+        course: item,
+        isDeleted: false,
+      })):[]
     };
-  console.log(courseData);
+    console.log(courseData);
 
-        try {
-          const res = (await createCourse(courseData)) as Tresponse<any>;
-          console.log(res);
-          if (res.error) {
-            toast.error(res.error.data.message, { id: toastId });
-          } else {
-            toast.success('Course created', { id: toastId });
-          }
-        } catch (err) {
-          console.log(err);
-          toast.error('Something went wrong', { id: toastId });
-        }
+    try {
+      const res = (await createCourse(courseData)) as Tresponse<any>;
+      console.log(res);
+      if (res.error) {
+        toast.error(res.error.data.message, { id: toastId });
+      } else {
+        toast.success("Course created", { id: toastId });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong", { id: toastId });
+    }
   };
 
   return (
     <Flex justify="center" align="center">
       <Col span={6}>
-        <PhForm
-          onSubmit={onSubmit}
-
-        >
-          <PhInput
-            type="text"
-            id="title"
-            name="title"
-            label="Title"
-          ></PhInput>
+        <PhForm onSubmit={onSubmit}>
+          <PhInput type="text" id="title" name="title" label="Title"></PhInput>
           <PhInput
             type="text"
             id="prefix"
             name="prefix"
             label="Prefix"
           ></PhInput>
-              <PhInput
-            type="text"
-            id="code"
-            name="code"
-            label="Code"
-          ></PhInput>
-              <PhInput
+          <PhInput type="text" id="code" name="code" label="Code"></PhInput>
+          <PhInput
             type="text"
             id="credits"
             name="credits"
             label="Credits"
           ></PhInput>
-        <PhSelect mode="multiple" name="preRequisiteCourses" label="preRequisiteCourses" options={prerequisiteCoursesOptions}></PhSelect>
+          <PhSelect
+            mode="multiple"
+            name="preRequisiteCourses"
+            label="preRequisiteCourses"
+            options={prerequisiteCoursesOptions}
+          ></PhSelect>
 
           <Button htmlType="submit">Submit</Button>
         </PhForm>
