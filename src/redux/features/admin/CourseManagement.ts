@@ -45,10 +45,43 @@ const courseManagementApi = baseApi.injectEndpoints({
             }),
             invalidatesTags:["semster"]
           }),
+          getAllCourses: builder.query({
+            query: (args) => {
+              const params = new URLSearchParams()
+              if (args) {
+                args.forEach(element => {
+                  params.append(element.name,element.value as string)
+                });
+              }
+              return {
+                url: "/courses",
+                method: "GET",
+                params:params
+              };
+            },
+            providesTags:["courses"],
+            transformErrorResponse: (
+              response: TResoponseRedux<any>
+            ) => {
+              console.log("inside redux", response);
+              return {
+                data: response.data,
+                meta: response.meta,
+              };
+            },
+          }),
+          addCourse:builder.mutation({
+            query:(data)=>({
+              url:`/courses/create-course`,
+              method:"POST",
+              body:data
+            }),
+            invalidatesTags:['courses']
+          })
    
     
         
       }),
 })
 
-export const {useAddRegisterSemesterMutation,useGetAllSemestersQuery,useUpdateRegisterSemesterMutation} = courseManagementApi
+export const {useAddRegisterSemesterMutation,useGetAllSemestersQuery,useUpdateRegisterSemesterMutation,useGetAllCoursesQuery,useAddCourseMutation} = courseManagementApi
