@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import { adminPaths } from "./admin.route";
 import { routeGenerator } from "../utils/routesGenerator";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
+import ChangePassword from "../pages/ChangePassword";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
     path: "/registation",
     element: <Register></Register>,
   },
+  {
+    path:"/change-password",
+    element:<ChangePassword></ChangePassword>
+  }
 ]);
 
 export default router;
