@@ -1,180 +1,114 @@
-import { Button, Dropdown, Modal, Table, TableColumnsType, Tag } from "antd";
+import { Button, Modal, Table } from 'antd';
 
-import { TSemester } from "../../../types";
+import { useAddFacultiesMutation, useGetAllFacultiesQuery } from '../../../redux/features/admin/userManagement.api';
+import { useState } from 'react';
+import PHForm from '../../../components/form/PhForm';
+import PhSelect from '../../../components/form/PhSelect';
+import { useGetAllCoursesQuery } from '../../../redux/features/admin/CourseManagement';
 
-import {
-  useGetAllCoursesQuery,
-  useUpdateRegisterSemesterMutation,
-} from "../../../redux/features/admin/CourseManagement";
-import { useState } from "react";
-import PHForm from "../../../components/form/PhForm";
-import PhSelect from "../../../components/form/PhSelect";
-import { useGetAcademicFacultiesQuery } from "../../../redux/features/admin/academicManagement.api";
+const Courses = () => {
+  // const [params, setParams] = useState<TQueryParam[] | undefined>(undefined);
 
-export type TTableData = Pick<TSemester, "_id" | "title" | "code" | "prefix">;
-// interface DataType {
-//   key: React.Key;
-//   name: string;
-//   age: number;
-//   address: string;
-// }
+  const { data: courses, isFetching } = useGetAllCoursesQuery(undefined);
 
-// const items = [
-//   {
-//     label: "Upcoming",
-//     key: "UPCOMING",
-//   },
-//   {
-//     label: "Ongoing",
-//     key: "ONGOING",
-//   },
-//   {
-//     label: "Ended",
-//     key: "ENDED",
-//   },
-// ];
+  const tableData = courses?.data?.map(({ _id, title, prefix, code }) => ({
+    key: _id,
+    title,
+    code: `${prefix}${code}`,
+  }));
 
-const Course = () => {
-  const [semesterId, setSemesterId] = useState("");
-  console.log(semesterId);
-  //   const [params, setParamas] = useState<TQuearyParams[] | undefined>(undefined);
-  const {
-    data: courseData,
-    isLoading,
-    isFetching,
-  } = useGetAllCoursesQuery(undefined);
-  const [updateSemesterStatus] = useUpdateRegisterSemesterMutation(undefined);
-
-  const tableData = courseData?.data?.map(
-    ({ _id, title, code, prefix }: TTableData) => ({
-      key: _id,
-      title: title,
-      code: code,
-      prefix: prefix,
-      //   name: `${academicSemester.name} ${academicSemester.year}`,
-      //   startDate: moment(new Date(startDate)).format("MMMM"),
-      //   endDate: moment(new Date(endDate)).format("MMMM"),
-      //   status,
-    })
-  );
-  const handleStatusUpdate = (data) => {
-    const updateData = {
-      id: semesterId,
-      data: {
-        status: data?.key,
-      },
-    };
-    updateSemesterStatus(updateData);
-  };
-  const menuProps = {
-    // items,
-    onClick: handleStatusUpdate,
-  };
-  const columns: TableColumnsType<TTableData> = [
+  const columns = [
     {
-      title: "Title",
-      key: "title",
-      dataIndex: "title",
-    },
-    // {
-    //   title: "Status",
-    //   key: "status",
-    //   dataIndex: "status",
-    //   render: (item) => {
-    //     if (item === "UPCOMING") {
-    //       return <Tag color="blue">{item}</Tag>;
-    //     } else if (item === "ENDED") {
-    //       return <Tag color="red">{item}</Tag>;
-    //     } else {
-    //       return <Tag color="green">{item}</Tag>;
-    //     }
-    //   },
-    // },
-    {
-      title: "Code",
-      key: "code",
-      dataIndex: "code",
+      title: 'Title',
+      key: 'title',
+      dataIndex: 'title',
     },
     {
-      title: "Prefix",
-      key: "prefix",
-      dataIndex: "prefix",
+      title: 'Code',
+      key: 'code',
+      dataIndex: 'code',
     },
     {
-      title: "Action",
-      key: "x",
+      title: 'Action',
+      key: 'x',
       render: (item) => {
-        // return (
-        //   <div>
-        //     <Dropdown menu={menuProps} trigger={["click"]}>
-        //       <Button onClick={() => setSemesterId(item?.key)}>
-        //         Assign faculty
-        //       </Button>
-        //     </Dropdown>
-        //   </div>
-        // );
-        return <AddFacultyModal data={item} />;
+        return <AddFacultyModal facultyInfo={item} />;
       },
     },
   ];
 
-  //   const onChange: TableProps<TTableData>["onChange"] = (
-  //     pagination,
-  //     filters,
-  //     sorter,
-  //     extra
-  //   ) => {
-  //     if (extra.action === "filter") {
-  //       const quearyParams:TQuearyParams[] = [];
-  //       filters.name?.forEach((item) =>
-  //         quearyParams.push({ name: "name", value: item })
-  //       );
-  //       setParamas(quearyParams);
-  //     }
-  //     console.log("params", pagination, filters, sorter, extra);
-  //   };
-
-  if (isLoading) {
-    return <div>Loading........</div>;
-  }
+  // const onChange: TableProps<TTableData>['onChange'] = (
+  //   _pagination,
+  //   filters,
+  //   _sorter,
+  //   extra
+  // ) => {
+  //   if (extra.action === 'filter') {
+  //     const queryParams: TQueryParam[] = [];
+  //     setParams(queryParams);
+  //   }
+  // };
 
   return (
-    <div>
-      <Table<TTableData>
-        loading={isFetching}
-        columns={columns}
-        dataSource={tableData}
-        // onChange={onChange}
-        showSorterTooltip={{ target: "sorter-icon" }}
-      />
-    </div>
+    <Table
+      loading={isFetching}
+      columns={columns}
+      dataSource={tableData}
+      // onChange={onChange}
+    />
   );
 };
 
-const AddFacultyModal = ({ data }) => {
-  console.log(data);
+const AddFacultyModal = ({ facultyInfo }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {data:facultiesData} = useGetAcademicFacultiesQuery(undefined);
-  console.log(facultiesData);
+  const { data: facultiesData } = useGetAllFacultiesQuery(undefined);
+  const [addFaculties] = useAddFacultiesMutation();
+
+  const facultiesOption = facultiesData?.data?.map((item) => ({
+    value: item._id,
+    label: item.name,
+  }));
+
+  const handleSubmit = (data) => {
+    const facultyData = {
+      courseId: facultyInfo.key,
+      data,
+    };
+
+    console.log(facultyData);
+
+    addFaculties(facultyData);
+  };
+
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const handleOk = () => {
+
+  const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const handleSubmit=(data)=>{
-    console.log(data);
-  }
+
   return (
     <>
       <Button onClick={showModal}>Add Faculty</Button>
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk}>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
         <PHForm onSubmit={handleSubmit}>
-            <PhSelect ></PhSelect>
+          <PhSelect
+            mode="multiple"
+            options={facultiesOption}
+            name="faculties"
+            label="Faculty"
+          />
+          <Button htmlType="submit">Submit</Button>
         </PHForm>
       </Modal>
     </>
   );
 };
 
-export default Course;
+export default Courses;
