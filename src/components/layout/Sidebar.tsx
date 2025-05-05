@@ -1,4 +1,4 @@
-import { Layout, Menu } from "antd";
+import { Layout, Menu } from "an
 import { sidebarItemGenerator } from "../../utils/sidebarItemsGenerator";
 import { adminPaths } from "../../routes/admin.route";
 import { useAppSelector } from "../../redux/hook";
