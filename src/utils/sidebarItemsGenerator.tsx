@@ -29,3 +29,5 @@ export const sidebarItemGenerator = (items: TUserPaths[], role: string) => {
   }, []);
   return sideBarItems;
 };
+
+//some code added 
